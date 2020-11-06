@@ -20,3 +20,5 @@ MONGO SHELL CONNECTION
 ------------------------
  mongo --host "mongodb+srv://cluster0.ibrvy.mongodb.net/test" --username admin
 ```
+
+- images not store in db but just the pathway
