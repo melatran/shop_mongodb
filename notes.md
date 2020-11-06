@@ -13,4 +13,10 @@ mongodb.connect('mongodb+srv://test_user:12345@cluster0.ibrvy.mongodb.net/shop?r
   });
 ```
 
-- store products to db
+- store products to db by creating collection
+
+```
+MONGO SHELL CONNECTION
+------------------------
+ mongo --host "mongodb+srv://cluster0.ibrvy.mongodb.net/test" --username admin
+```

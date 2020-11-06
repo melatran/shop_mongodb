@@ -1,6 +1,9 @@
 const Router = require('express').Router;
 
 const router = Router();
+const mongodb = require('mongodb')
+const MongoClient = mongodb.MongoClient;
+const Decimal128 = mongodb.Decimal128;
 
 const products = [
   {
@@ -79,11 +82,33 @@ router.post('', (req, res, next) => {
   const newProduct = {
     name: req.body.name,
     description: req.body.description,
-    price: parseFloat(req.body.price), // store this as 128bit decimal in MongoDB
+    price: Decimal128.fromString(req.body.price.toString()), // store this as 128bit decimal in MongoDB
     image: req.body.image
   };
-  console.log(newProduct);
-  res.status(201).json({ message: 'Product added', productId: 'DUMMY' });
+  MongoClient.connect('mongodb+srv://test_user:12345@cluster0.ibrvy.mongodb.net/shop?retryWrites=true&w=majority')
+  .then(client => {
+    client.db().collection('products')
+    .insertOne(newProduct)
+    .then(result => {
+      console.log(result);
+      client.close;
+      res
+        .status(201)
+        .json({
+          message: "Product added",
+          productId: result.insertId
+        });
+    }).catch(err => {
+      console.log(err);
+      client.close();
+      res.status(500).json({
+        message: "An error occured"
+      });
+    });
+  })
+  .catch(err => {
+    console.log(err);
+  });
 });
 
 // Edit existing product
@@ -95,7 +120,6 @@ router.patch('/:id', (req, res, next) => {
     price: parseFloat(req.body.price), // store this as 128bit decimal in MongoDB
     image: req.body.image
   };
-  console.log(updatedProduct);
   res.status(200).json({ message: 'Product updated', productId: 'DUMMY' });
 });
 
